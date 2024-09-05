@@ -26,7 +26,19 @@ INSTALL_SCOPE_USER = "USER"
 INSTALL_SCOPE_SYSTEM = "SYSTEM"
 
 FONT_LOCATION_SYSTEM = os.path.join(os.environ.get("SystemRoot"), "Fonts")
-FONT_LOCATION_USER = os.path.join(os.environ.get("LocalAppData"), "Microsoft", "Windows", "Fonts")
+try:
+    FONT_LOCATION_USER = os.path.join(os.environ.get("LocalAppData"), "Microsoft", "Windows", "Fonts")
+except Exception:
+    FONT_LOCATION_USER = os.path.join(
+        os.environ.get("SYSTEMDRIVE"),
+        "Users",
+        os.getlogin(),
+        "AppData",
+        "Local",
+        "Microsoft",
+        "Windows",
+        "Fonts"
+    )
 
 # Check if the Fonts folder exists, create it if it doesn't
 if not os.path.exists(FONT_LOCATION_USER):
