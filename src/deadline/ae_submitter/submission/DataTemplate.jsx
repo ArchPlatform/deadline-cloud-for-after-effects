@@ -1,14 +1,26 @@
 function __generateDataTemplate() {
-    var Frames = 
+    var FrameStarts =
     {
-        "name": "Frames",
+        "name": "FrameStarts",
         "type": "STRING",
         "userInterface": {
             "control": "LINE_EDIT",
-            "label": "Frames",
+            "label": "Starting Frames",
             "groupLabel": "After Effects Settings"
         },
-        "description": "The frames to render. E.g. 1,8,11",
+        "description": "The starting frames to render. E.g. 1,8,11",
+        "minLength": 1
+    }
+    var FrameEnds =
+    {
+        "name": "FrameEnds",
+        "type": "STRING",
+        "userInterface": {
+            "control": "LINE_EDIT",
+            "label": "Ending Frames",
+            "groupLabel": "After Effects Settings"
+        },
+        "description": "The starting frames to render. E.g. 10,18,21",
         "minLength": 1
     }
     var OutputPattern =
@@ -45,7 +57,8 @@ function __generateDataTemplate() {
         "description": "The render output path."
     }
     return {
-        "Frames": Frames,
+        "FrameStarts": FrameStarts,
+        "FrameEnds": FrameEnds,
         "OutputPattern" : OutputPattern,
         "OutputFormat": OutputFormat,
         "CompName": CompName,
