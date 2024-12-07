@@ -79,24 +79,44 @@ function __generateSubmitButton() {
     function generateStep(basicTemplate, itemName, stepsTemplate, stepID, renderQueueItem)
     {
         var compNameToCheck = dcUtil.removeIllegalCharacters(renderQueueItem.comp.name);
-        // logger.debug("[generateStep] itemName: " + itemName + "  stepID: " + stepID + "  compNameToCheck: " + compNameToCheck, _submitButtonFileName);
         stepsTemplate[0].name = itemName;
-        stepsTemplate[0].parameterSpace.taskParameterDefinitions[0].range = "{{Param." + itemName + "_Frames}}";
-        stepsTemplate[0].script.embeddedFiles[0].data = "frame: {{Task.Param.Frame}}";
+        stepsTemplate[0].parameterSpace.taskParameterDefinitions[0].range = "{{Param." + itemName + "_FrameStart}} - {{Param." + itemName + "_FrameEnd}} : {{Param." + itemName + "_ChunkSize}}";
+        stepsTemplate[0].parameterSpace.taskParameterDefinitions[1].range = "{{Param." + itemName + "_FrameStartPlusChunkSizeMinusOne}}-{{Param." + itemName + "_FrameEndMinusOne}}:{{Param." + itemName + "_ChunkSize}},{{Param." + itemName + "_FrameEnd}}";
         if(itemName != compNameToCheck)
         {
-            stepsTemplate[0].stepEnvironments[0].script.embeddedFiles[0].data += "comp_name: {{Param." + compNameToCheck + "_CompName}} \n";
+            stepsTemplate[0].script.embeddedFiles[0].data = "\"%AFTEREFFECTS_ADAPTOR_AERENDER_EXECUTABLE%\" -project \"{{Param.AfterEffectsProjectFile}}\" -comp \"{{Param." + itemName + "_CompName}}\" -s {{Task.Param.FrameChunkStart}} -e {{Task.Param.FrameChunkEnd}} || exit /b 1 \n"
+            // stepsTemplate[0].taskParameterDefinitions[2].range = ["{{Param." + compNameToCheck + "_CompName}}"];
         }
-        else
-        {
-            stepsTemplate[0].stepEnvironments[0].script.embeddedFiles[0].data += "comp_name: {{Param." + itemName + "_CompName}} \n";
+        else {
+            stepsTemplate[0].script.embeddedFiles[0].data = "\"%AFTEREFFECTS_ADAPTOR_AERENDER_EXECUTABLE%\" -project \"{{Param.AfterEffectsProjectFile}}\" -comp \"{{Param." + itemName + "_CompName}}\" -s {{Task.Param.FrameChunkStart}} -e {{Task.Param.FrameChunkEnd}} || exit /b 1 \n"
+            // stepsTemplate[0].taskParameterDefinitions[2].range = ["{{Param." + itemName + "_CompName}}"];
         }
-        stepsTemplate[0].stepEnvironments[0].script.embeddedFiles[0].data += "output_file_path: {{Param." + itemName + "_OutputFilePath}} \n";
-        stepsTemplate[0].stepEnvironments[0].script.embeddedFiles[0].data += "output_pattern: {{Param." + itemName + "_OutputPattern}} \n";
-        stepsTemplate[0].stepEnvironments[0].script.embeddedFiles[0].data += "output_format: {{Param." + itemName + "_OutputFormat}} \n";
         basicTemplate.steps[stepID-1] = stepsTemplate[0]; 
         // logger.debug("[generateStep] basicTemplate: " + JSON.stringify(basicTemplate), _submitButtonFileName);
         return basicTemplate;
+    }
+
+    function applyFrameChunkingDataToTemplate(itemName, frameList)
+    {
+        var output = {
+            "parameterDefinitions": [],
+            "parameterValues": [],
+        }
+
+        var chunkParametersList = dcUtil.getFrameChunkParameters(frameList, frameListGroup.framesPerTask.text);
+        // Currently only support a single frame range
+        output.parameterDefinitions.push(applyDataToTemplate(itemName + "_FrameStart", dcUtil.deepCopy(dcDataTemplate.FrameStart)));
+        output.parameterDefinitions.push(applyDataToTemplate(itemName + "_FrameEnd", dcUtil.deepCopy(dcDataTemplate.FrameEnd)));
+        output.parameterDefinitions.push(applyDataToTemplate(itemName + "_ChunkSize", dcUtil.deepCopy(dcDataTemplate.ChunkSize)));
+        output.parameterDefinitions.push(applyDataToTemplate(itemName + "_FrameStartPlusChunkSizeMinusOne", dcUtil.deepCopy(dcDataTemplate.FrameStartPlusChunkSizeMinusOne)));
+        output.parameterDefinitions.push(applyDataToTemplate(itemName + "_FrameEndMinusOne", dcUtil.deepCopy(dcDataTemplate.FrameEndMinusOne)));
+
+        output.parameterValues.push(applyDataToParameterTemplate(itemName + "_FrameStart", chunkParametersList[0].frameStart));
+        output.parameterValues.push(applyDataToParameterTemplate(itemName + "_FrameEnd", chunkParametersList[0].frameEnd));
+        output.parameterValues.push(applyDataToParameterTemplate(itemName + "_ChunkSize", chunkParametersList[0].chunkSize));
+        output.parameterValues.push(applyDataToParameterTemplate(itemName + "_FrameStartPlusChunkSizeMinusOne", chunkParametersList[0].frameStartPlusChunkSizeMinusOne));
+        output.parameterValues.push(applyDataToParameterTemplate(itemName + "_FrameEndMinusOne", chunkParametersList[0].frameEndMinusOne));
+        return output
     }
 
     function applyDataToTemplate(dataName, dataTemplate)
@@ -315,6 +335,7 @@ function __generateSubmitButton() {
 
             if (submissionText == useQueue)
                 totalJobs = 1;
+                queuedCount = 1;
 
             progressBarPanel.progressBar.value = 0;
             
@@ -467,12 +488,13 @@ function __generateSubmitButton() {
             
             var __compName = dcUtil.removeIllegalCharacters(app.project.renderQueue.item(j).comp.name);
             var frameList = getFrameList(app.project.renderQueue.item(j));
-            
-            // logger.debug("[createDataAndParameterTemplateOneJob] __compName: " + __compName, _submitButtonFileName);
-            // logger.debug("[createDataAndParameterTemplateOneJob] frameList: " + frameList, _submitButtonFileName);
-            
+
+            var chunking = applyFrameChunkingDataToTemplate(__compName, frameList)
+
             // Add data to the main template
-            jobTemplate.parameterDefinitions.push(applyDataToTemplate(__compName + "_Frames", dcUtil.deepCopy(dcDataTemplate.Frames)));
+            for (var pIdx = 0; pIdx < chunking.parameterDefinitions.length; pIdx++) {
+                jobTemplate.parameterDefinitions.push(chunking.parameterDefinitions[pIdx]);
+            }
             jobTemplate.parameterDefinitions.push(applyDataToTemplate(__compName + "_OutputPattern", dcUtil.deepCopy(dcDataTemplate.OutputPattern)));
             jobTemplate.parameterDefinitions.push(applyDataToTemplate(__compName + "_OutputFormat", dcUtil.deepCopy(dcDataTemplate.OutputFormat)));
             jobTemplate.parameterDefinitions.push(applyDataToTemplate(__compName + "_CompName", dcUtil.deepCopy(dcDataTemplate.CompName)));
@@ -480,13 +502,13 @@ function __generateSubmitButton() {
             
             // Add steps data per task that needs to be run
             jobTemplate = generateStep(jobTemplate, __compName, dcUtil.deepCopy(stepsTemplate), stepIndex, app.project.renderQueue.item(j));
-            // logger.debug("[createDataAndParameterTemplateOneJob] jobTemplate: " + JSON.stringify(jobTemplate), _submitButtonFileName);
             
             jobTemplate = applyHostReqToTemplate(jobTemplate);
-            // logger.debug("[createDataAndParameterTemplateOneJob] jobTemplate applyHostReqToTemplate: " + JSON.stringify(jobTemplate), _submitButtonFileName);
             
             // Add data to the parameter template
-            jobParams.parameterValues.push(applyDataToParameterTemplate(__compName + "_Frames", frameList));
+            for (var pIdx = 0; pIdx < chunking.parameterValues.length; pIdx++) {
+                jobParams.parameterValues.push(chunking.parameterValues[pIdx]);
+            }
             jobParams.parameterValues.push(applyDataToParameterTemplate(__compName + "_CompName", app.project.renderQueue.item(j).comp.name));
             jobParams.parameterValues.push(applyDataToParameterTemplate(__compName + "_OutputPattern", dcUtil.removePercentageFromFileName(getRenderQueueItemData(app.project.renderQueue.item(j))["fileName"])));
             jobParams.parameterValues.push(applyDataToParameterTemplate(__compName + "_OutputFormat", getRenderQueueItemData(app.project.renderQueue.item(j))["extension"]));
@@ -505,9 +527,13 @@ function __generateSubmitButton() {
     {
         var compNameToCheck = dcUtil.removeIllegalCharacters(renderQueueItem.comp.name);
         var frameList = getFrameList(renderQueueItem);
+
+        var chunking = applyFrameChunkingDataToTemplate(itemName, frameList)
         jobTemplate = generatePartialTemplate();
         // Add data to the main template
-        jobTemplate.parameterDefinitions.push(applyDataToTemplate(itemName + "_Frames", dcDataTemplate.Frames));
+        for (var pIdx = 0; pIdx < chunking.parameterDefinitions.length; pIdx++) {
+            jobTemplate.parameterDefinitions.push(chunking.parameterDefinitions[pIdx]);
+        }
         jobTemplate.parameterDefinitions.push(applyDataToTemplate(itemName + "_OutputPattern", dcDataTemplate.OutputPattern));
         jobTemplate.parameterDefinitions.push(applyDataToTemplate(itemName + "_OutputFormat", dcDataTemplate.OutputFormat));
         // jobTemplate.parameterDefinitions.push(applyDataToTemplate(itemName + "_CompName", dcDataTemplate.CompName));
@@ -523,7 +549,9 @@ function __generateSubmitButton() {
         jobParams.parameterValues.push(applyDataToParameterTemplate("deadline:maxFailedTasksCount", dcProperties.deadlineJobParameters.maxFailedTasksCount.get()));
         jobParams.parameterValues.push(applyDataToParameterTemplate("deadline:maxRetriesPerTask", dcProperties.deadlineJobParameters.maxRetriesPerTask.get()));
         jobParams.parameterValues.push(applyDataToParameterTemplate("deadline:priority", dcProperties.deadlineJobParameters.priority.get()));
-        jobParams.parameterValues.push(applyDataToParameterTemplate(itemName + "_Frames", frameList));
+        for (var pIdx = 0; pIdx < chunking.parameterValues.length; pIdx++) {
+            jobParams.parameterValues.push(chunking.parameterValues[pIdx]);
+        }
         // jobParams.parameterValues.push(applyDataToParameterTemplate(itemName + "_CompName", comp));
         jobParams.parameterValues.push(applyDataToParameterTemplate(itemName + "_OutputPattern", dcUtil.removePercentageFromFileName((getRenderQueueItemData(renderQueueItem)["fileName"]))));
         jobParams.parameterValues.push(applyDataToParameterTemplate(itemName + "_OutputFormat", getRenderQueueItemData(renderQueueItem)["extension"]));

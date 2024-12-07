@@ -672,6 +672,12 @@ function __generateSubmitterUI() {
         frameListGroup.useCompFrameList.value = initUseCompFrameRange;
         frameListGroup.useCompFrameList.helpTip = 'If enabled, the Comp\'s frame list will be used instead of the frame list in this submitter.';
 
+        frameListGroup.framesPerTask = frameListGroup.add('edittext', undefined, 10);
+        frameListGroup.framesPerTask.size = SHORT_TEXT_SIZE;
+        frameListGroup.framesPerTaskLabel = frameListGroup.add('statictext', undefined, 'Frames Per Task');
+        frameListGroup.framesPerTaskLabel.size = LABEL_SIZE;
+        frameListGroup.framesPerTaskLabel.helpTip = 'This is the number of frames to be rendered per Job Task.';
+
         // Create Comp submission group and widgets (Select One, Use Selected in RQ, All as separate)
         compSubmissionGroup = deadlineCloud.aeOptionsPanel.add('group', undefined);
         compSubmissionGroup.alignment = [ScriptUI.Alignment.FILL, ScriptUI.Alignment.TOP];
@@ -1219,6 +1225,17 @@ function __generateSubmitterUI() {
             if(text !== filteredText)
             {
                 frameListGroup.frameList.text = filteredText;
+            }
+        }
+
+        frameListGroup.framesPerTask.onChange = function() {
+            currentValue = frameListGroup.framesPerTask.text.replace(/[^\d]/g, '');
+
+            if (parseInt(currentValue) > 9999) {
+                frameListGroup.framesPerTask.text = "9999"
+            }
+            if (parseInt(currentValue) < 1) {
+                frameListGroup.framesPerTask.text = "1"
             }
         }
 
