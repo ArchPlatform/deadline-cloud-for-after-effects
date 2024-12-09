@@ -82,14 +82,9 @@ var OPENJD_TEMPLATE = {
                     "name": "FrameEnd",
                     "type": "INT",
                     "range": "{{Param.FrameEnds}}"
-                },
-                {
-                    "name": "Comp",
-                    "type": "STRING",
-                    "range": ["{{Param.CompName}}"]
                 }
             ],
-            "combination": "(FrameStart, FrameEnd, Comp)"
+            "combination": "(FrameStart, FrameEnd)"
         },
         "stepEnvironments": [{
             "name": "Install Fonts",
