@@ -29,14 +29,58 @@ var OPENJD_TEMPLATE = {
             "description": "The After Effects Project file to render."
         },
         {
-            "name": "Frames",
+            "name": "FrameStart",
             "type": "STRING",
             "userInterface": {
                 "control": "LINE_EDIT",
-                "label": "Frames",
+                "label": "Starting Frame",
                 "groupLabel": "After Effects Settings"
             },
-            "description": "The frame range to render. E.g. 1,8,11",
+            "description": "The starting frame to render.",
+            "minLength": 1
+        },
+        {
+            "name": "FrameEnd",
+            "type": "STRING",
+            "userInterface": {
+                "control": "LINE_EDIT",
+                "label": "Ending Frame",
+                "groupLabel": "After Effects Settings"
+            },
+            "description": "The ending frame to render.",
+            "minLength": 1
+        },
+        {
+            "name": "ChunkSize",
+            "type": "STRING",
+            "userInterface": {
+                "control": "LINE_EDIT",
+                "label": "Frames Per Task",
+                "groupLabel": "After Effects Settings"
+            },
+            "description": "The chunk size of frames per task to render",
+            "minLength": 1
+        },
+        {
+            "name": "FrameStartPlusChunkSizeMinusOne",
+            "type": "STRING",
+            "userInterface": {
+                "control": "LINE_EDIT",
+                "label": "FrameStart + ChunkSize - 1",
+                "groupLabel": "After Effects Settings"
+            },
+            "description": "[Internal] This value needs to equal FrameStart + ChunkSize - 1",
+            "minLength": 1
+        },
+        {
+            "name": "FrameEndMinusOne",
+            "type": "STRING",
+            "userInterface": {
+                "control": "LINE_EDIT",
+                "label": "FrameEnd - 1",
+                "groupLabel": "After Effects Settings"
+            },
+            "description": "[Internal] This value needs to equal FrameEnd - 1",
             "minLength": 1
         },
         {
@@ -74,17 +118,17 @@ var OPENJD_TEMPLATE = {
         "parameterSpace": {
             "taskParameterDefinitions": [
                 {
-                    "name": "FrameStart",
+                    "name": "FrameChunkStart",
                     "type": "INT",
-                    "range": "{{Param.FrameStarts}}"
+                    "range": "{{Param.FrameStart}}-{{Param.FrameEnd}}:{{Param.ChunkSize}}"
                 },
                 {
-                    "name": "FrameEnd",
+                    "name": "FrameChunkEnd",
                     "type": "INT",
-                    "range": "{{Param.FrameEnds}}"
+                    "range": "{{Param.FrameStartPlusChunkSizeMinusOne}}-{{Param.FrameEndMinusOne}}:{{Param.ChunkSize}},{{Param.FrameEnd}}"
                 }
             ],
-            "combination": "(FrameStart, FrameEnd)"
+            "combination": "(FrameChunkStart, FrameChunkEnd)"
         },
         "stepEnvironments": [{
             "name": "Install Fonts",
@@ -133,7 +177,7 @@ var OPENJD_TEMPLATE = {
                 "filename": "aerender.bat",
                 "type": "TEXT",
                 "runnable": true,
-                "data": "\"%AFTEREFFECTS_ADAPTOR_AERENDER_EXECUTABLE%\" -project \"{{Param.AfterEffectsProjectFile}}\" -comp \"{{Task.Param.Comp}}\" -s {{Task.Param.FrameStart}} -e {{Task.Param.FrameEnd}} || exit /b 1 \n"
+                "data": "\"%AFTEREFFECTS_ADAPTOR_AERENDER_EXECUTABLE%\" -project \"{{Param.AfterEffectsProjectFile}}\" -comp \"{{Task.Param.Comp}}\" -s {{Task.Param.FrameChunkStart}} -e {{Task.Param.FrameChunkEnd}} || exit /b 1 \n"
             }
             ]
         }
