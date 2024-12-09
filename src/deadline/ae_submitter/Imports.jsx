@@ -12,6 +12,8 @@
 
 #include "data/InitData.jsx"
 
+#include "data/RenderScript.jsx"
+
 #include "submission/AssetReferenceTemplate.jsx"
 
 #include "submission/DataTemplate.jsx"
