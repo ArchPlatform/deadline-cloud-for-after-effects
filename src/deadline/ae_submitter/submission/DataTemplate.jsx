@@ -1,28 +1,65 @@
 function __generateDataTemplate() {
-    var FrameStarts =
+    var FrameStart =
     {
-        "name": "FrameStarts",
+        "name": "FrameStart",
         "type": "STRING",
         "userInterface": {
             "control": "LINE_EDIT",
             "label": "Starting Frames",
             "groupLabel": "After Effects Settings"
         },
-        "description": "The starting frames to render. E.g. 1,8,11",
+        "description": "The starting frame to render.",
         "minLength": 1
     }
-    var FrameEnds =
+    var FrameEnd =
     {
-        "name": "FrameEnds",
+        "name": "FrameEnd",
         "type": "STRING",
         "userInterface": {
             "control": "LINE_EDIT",
             "label": "Ending Frames",
             "groupLabel": "After Effects Settings"
         },
-        "description": "The starting frames to render. E.g. 10,18,21",
+        "description": "The ending frame to render.",
         "minLength": 1
     }
+    var ChunkSize =
+    {
+        "name": "ChunkSize",
+        "type": "STRING",
+        "userInterface": {
+            "control": "LINE_EDIT",
+            "label": "Frames Per Task",
+            "groupLabel": "After Effects Settings"
+        },
+        "description": "The chunk size of frames per task to render",
+        "minLength": 1
+    }
+    var FrameStartPlusChunkSizeMinusOne =
+    {
+        "name": "FrameStartPlusChunkSizeMinusOne",
+        "type": "STRING",
+        "userInterface": {
+            "control": "LINE_EDIT",
+            "label": "FrameStart + ChunkSize - 1",
+            "groupLabel": "After Effects Settings"
+        },
+        "description": "[Internal] This value needs to equal FrameStart + ChunkSize - 1",
+        "minLength": 1
+    }
+    var FrameEndMinusOne =
+    {
+        "name": "FrameEndMinusOne",
+        "type": "STRING",
+        "userInterface": {
+            "control": "LINE_EDIT",
+            "label": "FrameEnd - 1",
+            "groupLabel": "After Effects Settings"
+        },
+        "description": "[Internal] This value needs to equal FrameEnd - 1",
+        "minLength": 1
+    }
+
     var OutputPattern =
     {
         "name": "OutputPattern",
@@ -57,8 +94,11 @@ function __generateDataTemplate() {
         "description": "The render output path."
     }
     return {
-        "FrameStarts": FrameStarts,
-        "FrameEnds": FrameEnds,
+        "FrameStart": FrameStart,
+        "FrameEnd": FrameEnd,
+        "ChunkSize": ChunkSize,
+        "FrameStartPlusChunkSizeMinusOne": FrameStartPlusChunkSizeMinusOne,
+        "FrameEndMinusOne": FrameEndMinusOne,
         "OutputPattern" : OutputPattern,
         "OutputFormat": OutputFormat,
         "CompName": CompName,
