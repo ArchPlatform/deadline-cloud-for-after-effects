@@ -857,7 +857,7 @@ function __generateUtil() {
                 // Range
                 var numbers = splitList[i].split("-");
                 // Either the framesPerTask we requested, or the smaller range if X-Y is less than framesPerTask
-                var chunkSize = Math.min([parseInt(numbers[1]) - parseInt(numbers[0]) + 1, framesPerTask])
+                var chunkSize = Math.min(parseInt(numbers[1]) - parseInt(numbers[0]) + 1, framesPerTask)
                 frameChunkParametersList.push({
                     "originalRange": splitList[i],
                     "frameStart": parseInt(numbers[0]),
