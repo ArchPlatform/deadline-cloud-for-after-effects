@@ -177,7 +177,17 @@ var OPENJD_TEMPLATE = {
                 "filename": "aerender.bat",
                 "type": "TEXT",
                 "runnable": true,
-                "data": "\"%AFTEREFFECTS_ADAPTOR_AERENDER_EXECUTABLE%\" -project \"{{Param.AfterEffectsProjectFile}}\" -comp \"{{Task.Param.Comp}}\" -s {{Task.Param.FrameChunkStart}} -e {{Task.Param.FrameChunkEnd}} || exit /b 1 \n"
+                "data": "@ECHO OFF\n" +
+                    "IF \"%AFTEREFFECTS_ADAPTOR_AERENDER_EXECUTABLE%\" == \"\" (\n" +
+                    "  set AFTEREFFECTS_ADAPTOR_AERENDER_EXECUTABLE=aerender.exe\n" +
+                    ")\n" +
+                    "\n" +
+                    "\"%AFTEREFFECTS_ADAPTOR_AERENDER_EXECUTABLE%\" -project \"{{Param.AfterEffectsProjectFile}}\" -comp \"{{Task.Param.Comp}}\" -s {{Task.Param.FrameChunkStart}} -e {{Task.Param.FrameChunkEnd}}\n" +
+                    "IF %ERRORLEVEL% NEQ 0 (\n" +
+                    " echo \"Return code: %ERRORLEVEL%\"\n" +
+                    " exit %ERRORLEVEL%\n" +
+                    ")\n" +
+                    "exit 0\n",
             }
             ]
         }
