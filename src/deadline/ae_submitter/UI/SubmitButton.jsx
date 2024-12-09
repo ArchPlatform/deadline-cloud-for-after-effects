@@ -85,10 +85,12 @@ function __generateSubmitButton() {
         stepsTemplate[0].parameterSpace.taskParameterDefinitions[1].range = "{{Param." + itemName + "_FrameEnds}}";
         if(itemName != compNameToCheck)
         {
-            stepsTemplate[0].parameterSpace.taskParameterDefinitions[2].range = ["{{Param." + compNameToCheck + "_CompName}}"];
+            stepsTemplate[0].script.embeddedFiles[0].data = "\"%AFTEREFFECTS_ADAPTOR_AERENDER_EXECUTABLE%\" -project \"{{Param.AfterEffectsProjectFile}}\" -comp \"{{Param." + itemName + "_CompName}}\" -s {{Task.Param.FrameStart}} -e {{Task.Param.FrameEnd}} || exit /b 1 \n"
+            // stepsTemplate[0].taskParameterDefinitions[2].range = ["{{Param." + compNameToCheck + "_CompName}}"];
         }
         else {
-            stepsTemplate[0].parameterSpace.taskParameterDefinitions[2].range = ["{{Param." + itemName + "_CompName}}"];
+            stepsTemplate[0].script.embeddedFiles[0].data = "\"%AFTEREFFECTS_ADAPTOR_AERENDER_EXECUTABLE%\" -project \"{{Param.AfterEffectsProjectFile}}\" -comp \"{{Param." + itemName + "_CompName}}\" -s {{Task.Param.FrameStart}} -e {{Task.Param.FrameEnd}} || exit /b 1 \n"
+            // stepsTemplate[0].taskParameterDefinitions[2].range = ["{{Param." + itemName + "_CompName}}"];
         }
         basicTemplate.steps[stepID-1] = stepsTemplate[0]; 
         // logger.debug("[generateStep] basicTemplate: " + JSON.stringify(basicTemplate), _submitButtonFileName);
@@ -536,8 +538,14 @@ function __generateSubmitButton() {
             for(var i = 0; i < frameListChunks.length; i++)
             {
                 var numbers = frameListChunks[i].split("-");
-                frameStarts.push(numbers[0]);
-                frameEnds.push(numbers[1]);
+                if (frameStarts.length > 0) {
+                    frameStarts += ","
+                }
+                if (frameEnds.length > 0) {
+                    frameEnds += ","
+                }
+                frameStarts += (numbers[0]);
+                frameEnds += (numbers[1]);
             }
         }
         jobTemplate = generatePartialTemplate();
