@@ -82,15 +82,9 @@ function __generateSubmitButton() {
         stepsTemplate[0].name = itemName;
         stepsTemplate[0].parameterSpace.taskParameterDefinitions[0].range = "{{Param." + itemName + "_FrameStart}} - {{Param." + itemName + "_FrameEnd}} : {{Param." + itemName + "_ChunkSize}}";
         stepsTemplate[0].parameterSpace.taskParameterDefinitions[1].range = "{{Param." + itemName + "_FrameStartPlusChunkSizeMinusOne}}-{{Param." + itemName + "_FrameEndMinusOne}}:{{Param." + itemName + "_ChunkSize}},{{Param." + itemName + "_FrameEnd}}";
-        if(itemName != compNameToCheck)
-        {
-            stepsTemplate[0].script.embeddedFiles[0].data = "\"%AFTEREFFECTS_ADAPTOR_AERENDER_EXECUTABLE%\" -project \"{{Param.AfterEffectsProjectFile}}\" -comp \"{{Param." + itemName + "_CompName}}\" -s {{Task.Param.FrameChunkStart}} -e {{Task.Param.FrameChunkEnd}} || exit /b 1 \n"
-            // stepsTemplate[0].taskParameterDefinitions[2].range = ["{{Param." + compNameToCheck + "_CompName}}"];
-        }
-        else {
-            stepsTemplate[0].script.embeddedFiles[0].data = "\"%AFTEREFFECTS_ADAPTOR_AERENDER_EXECUTABLE%\" -project \"{{Param.AfterEffectsProjectFile}}\" -comp \"{{Param." + itemName + "_CompName}}\" -s {{Task.Param.FrameChunkStart}} -e {{Task.Param.FrameChunkEnd}} || exit /b 1 \n"
-            // stepsTemplate[0].taskParameterDefinitions[2].range = ["{{Param." + itemName + "_CompName}}"];
-        }
+
+        stepsTemplate[0].script.embeddedFiles[0].data = dcRenderScript.generateRenderCommand("{{Param." + itemName + "_CompName}}")
+
         basicTemplate.steps[stepID-1] = stepsTemplate[0]; 
         // logger.debug("[generateStep] basicTemplate: " + JSON.stringify(basicTemplate), _submitButtonFileName);
         return basicTemplate;
