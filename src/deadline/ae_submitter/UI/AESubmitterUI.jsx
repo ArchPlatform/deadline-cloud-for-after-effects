@@ -75,6 +75,7 @@ function __generateSubmitterUI() {
     } else {
         initFirstAndLast = dcUtil.parseBool(dcSettings.getIniSetting("FirstAndLast", "false"));
     }
+    var initFramesPerTask = parseInt(dcSettings.getIniSetting("FramesPerTask", "10"));
 
     var initIgnoreMissingLayers = dcUtil.parseBool(dcSettings.getIniSetting("MissingLayers", "false"));
     var initIgnoreMissingEffects = dcUtil.parseBool(dcSettings.getIniSetting("MissingEffects", "false"));
@@ -672,7 +673,7 @@ function __generateSubmitterUI() {
         frameListGroup.useCompFrameList.value = initUseCompFrameRange;
         frameListGroup.useCompFrameList.helpTip = 'If enabled, the Comp\'s frame list will be used instead of the frame list in this submitter.';
 
-        frameListGroup.framesPerTask = frameListGroup.add('edittext', undefined, 10);
+        frameListGroup.framesPerTask = frameListGroup.add('edittext', undefined, initFramesPerTask);
         frameListGroup.framesPerTask.size = SHORT_TEXT_SIZE;
         frameListGroup.framesPerTaskLabel = frameListGroup.add('statictext', undefined, 'Frames Per Task');
         frameListGroup.framesPerTaskLabel.size = LABEL_SIZE;
