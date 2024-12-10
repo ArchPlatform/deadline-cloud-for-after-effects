@@ -98,23 +98,18 @@ function __generateSubmitButton() {
         }
 
         var chunkParametersList = dcUtil.getFrameChunkParameters(frameList, frameListGroup.framesPerTask.text);
-        for(var i = 0; i < chunkParametersList.length; i++)
-        {
-            var chunk = chunkParametersList[i];
-            output.parameterDefinitions.push(applyDataToTemplate(itemName + "_FrameStart", dcUtil.deepCopy(dcDataTemplate.FrameStart)));
-            output.parameterDefinitions.push(applyDataToTemplate(itemName + "_FrameEnd", dcUtil.deepCopy(dcDataTemplate.FrameEnd)));
-            output.parameterDefinitions.push(applyDataToTemplate(itemName + "_ChunkSize", dcUtil.deepCopy(dcDataTemplate.ChunkSize)));
-            output.parameterDefinitions.push(applyDataToTemplate(itemName + "_FrameStartPlusChunkSizeMinusOne", dcUtil.deepCopy(dcDataTemplate.FrameStartPlusChunkSizeMinusOne)));
-            output.parameterDefinitions.push(applyDataToTemplate(itemName + "_FrameEndMinusOne", dcUtil.deepCopy(dcDataTemplate.FrameEndMinusOne)));
+        // Currently only support a single frame range
+        output.parameterDefinitions.push(applyDataToTemplate(itemName + "_FrameStart", dcUtil.deepCopy(dcDataTemplate.FrameStart)));
+        output.parameterDefinitions.push(applyDataToTemplate(itemName + "_FrameEnd", dcUtil.deepCopy(dcDataTemplate.FrameEnd)));
+        output.parameterDefinitions.push(applyDataToTemplate(itemName + "_ChunkSize", dcUtil.deepCopy(dcDataTemplate.ChunkSize)));
+        output.parameterDefinitions.push(applyDataToTemplate(itemName + "_FrameStartPlusChunkSizeMinusOne", dcUtil.deepCopy(dcDataTemplate.FrameStartPlusChunkSizeMinusOne)));
+        output.parameterDefinitions.push(applyDataToTemplate(itemName + "_FrameEndMinusOne", dcUtil.deepCopy(dcDataTemplate.FrameEndMinusOne)));
 
-            output.parameterValues.push(applyDataToParameterTemplate(itemName + "_FrameStart", chunk.frameStart));
-            output.parameterValues.push(applyDataToParameterTemplate(itemName + "_FrameEnd", chunk.frameEnd));
-            output.parameterValues.push(applyDataToParameterTemplate(itemName + "_ChunkSize", chunk.chunkSize));
-            output.parameterValues.push(applyDataToParameterTemplate(itemName + "_FrameStartPlusChunkSizeMinusOne", chunk.frameStartPlusChunkSizeMinusOne));
-            output.parameterValues.push(applyDataToParameterTemplate(itemName + "_FrameEndMinusOne", chunk.frameEndMinusOne));
-            // Currently only support a single frame range
-            break
-        }
+        output.parameterValues.push(applyDataToParameterTemplate(itemName + "_FrameStart", chunkParametersList[0].frameStart));
+        output.parameterValues.push(applyDataToParameterTemplate(itemName + "_FrameEnd", chunkParametersList[0].frameEnd));
+        output.parameterValues.push(applyDataToParameterTemplate(itemName + "_ChunkSize", chunkParametersList[0].chunkSize));
+        output.parameterValues.push(applyDataToParameterTemplate(itemName + "_FrameStartPlusChunkSizeMinusOne", chunkParametersList[0].frameStartPlusChunkSizeMinusOne));
+        output.parameterValues.push(applyDataToParameterTemplate(itemName + "_FrameEndMinusOne", chunkParametersList[0].frameEndMinusOne));
         return output
     }
 
