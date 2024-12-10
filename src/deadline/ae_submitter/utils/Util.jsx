@@ -871,49 +871,6 @@ function __generateUtil() {
         return frameChunkParametersList
     }
 
-    function frameListToTaskChunks(frameList, framesPerTask) {
-        /**
-        * Splits up a frameList into chunks of at most framesPerTask size.
-        * @param {string} frameList: List of frames given in the UI or entire frame range of the comp.
-        * @param {string} framesPerTask: The number of frames we wish to include per task
-        * Returns an array of <start>-<end> frameLists.
-        */
-        var chunkedFrameLists = [];
-        var splitList = frameList.split(",");
-
-        for(var i = 0; i < splitList.length; i++)
-        {
-            if(splitList[i].indexOf("-") == -1)
-            {
-                chunkedFrameLists.push(splitList[i] + "-" + splitList[i])
-            }
-            else
-            {
-                var numbers = splitList[i].split("-");
-                var chunk = [];
-                for(var j = parseInt(numbers[0]); j < parseInt(numbers[1]) - parseInt(numbers[0]) + 1 + parseInt(numbers[0]); j++)
-                {
-                   if(chunk.length < parseInt(framesPerTask))
-                   {
-                       chunk.push(j);
-                   }
-                   else
-                   {
-                       chunkedFrameLists.push(chunk[0] + "-" + (chunk[chunk.length-1]));
-                       chunk = [];
-                       chunk.push(j);
-                   }
-                }
-                if(chunk.length > 0)
-                {
-                   chunkedFrameLists.push(chunk[0] + "-" + (chunk[chunk.length-1]));
-                   chunk = [];
-                }
-            }
-        }
-        return chunkedFrameLists;
-    }
-
     function getDuplicateFrames(frameList)
     {
         /**
@@ -1031,7 +988,6 @@ function __generateUtil() {
         "removeIllegalCharacters": removeIllegalCharacters,
         "removePercentageFromFileName": removePercentageFromFileName,
         "getDuplicateFrames": getDuplicateFrames,
-        "frameListToTaskChunks": frameListToTaskChunks,
         "getFrameChunkParameters": getFrameChunkParameters,
         "getTempFile": getTempFile,
         "getUserDirectory": getUserDirectory
