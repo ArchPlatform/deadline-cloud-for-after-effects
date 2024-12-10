@@ -334,6 +334,7 @@ function __generateSubmitButton() {
 
             if (submissionText == useQueue)
                 totalJobs = 1;
+                queuedCount = 1;
 
             progressBarPanel.progressBar.value = 0;
             
@@ -493,7 +494,6 @@ function __generateSubmitButton() {
             for (var pIdx = 0; pIdx < chunking.parameterDefinitions.length; pIdx++) {
                 jobTemplate.parameterDefinitions.push(chunking.parameterDefinitions[pIdx]);
             }
-            jobTemplate.parameterDefinitions.push(applyDataToTemplate(__compName + "_FrameEndMinusOne", dcUtil.deepCopy(dcDataTemplate.FrameEndMinusOne)));
             jobTemplate.parameterDefinitions.push(applyDataToTemplate(__compName + "_OutputPattern", dcUtil.deepCopy(dcDataTemplate.OutputPattern)));
             jobTemplate.parameterDefinitions.push(applyDataToTemplate(__compName + "_OutputFormat", dcUtil.deepCopy(dcDataTemplate.OutputFormat)));
             jobTemplate.parameterDefinitions.push(applyDataToTemplate(__compName + "_CompName", dcUtil.deepCopy(dcDataTemplate.CompName)));
