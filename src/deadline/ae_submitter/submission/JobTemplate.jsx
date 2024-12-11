@@ -174,20 +174,10 @@ var OPENJD_TEMPLATE = {
             "embeddedFiles": [
             {
                 "name": "runAerender",
-                "filename": "aerender.bat",
+                "filename": "aerender.ps1",
                 "type": "TEXT",
                 "runnable": true,
-                "data": "@ECHO OFF\n" +
-                    "IF \"%AFTEREFFECTS_ADAPTOR_AERENDER_EXECUTABLE%\" == \"\" (\n" +
-                    "  set AFTEREFFECTS_ADAPTOR_AERENDER_EXECUTABLE=aerender.exe\n" +
-                    ")\n" +
-                    "\n" +
-                    "\"%AFTEREFFECTS_ADAPTOR_AERENDER_EXECUTABLE%\" -project \"{{Param.AfterEffectsProjectFile}}\" -comp \"{{Task.Param.Comp}}\" -s {{Task.Param.FrameChunkStart}} -e {{Task.Param.FrameChunkEnd}}\n" +
-                    "IF %ERRORLEVEL% NEQ 0 (\n" +
-                    " echo \"Return code: %ERRORLEVEL%\"\n" +
-                    " exit %ERRORLEVEL%\n" +
-                    ")\n" +
-                    "exit 0\n",
+                "data": "aerender.exe -project \"{{Param.AfterEffectsProjectFile}}\" -comp \"{{Task.Param.Comp}}\" -s {{Task.Param.FrameChunkStart}} -e {{Task.Param.FrameChunkEnd}}\n"
             }
             ]
         }
