@@ -69,6 +69,7 @@ function __generateSubmitterUI() {
     var initExportAsXml = dcUtil.parseBool(dcSettings.getIniSetting("ExportAsXml", "false"));
     var initDeleteTempXml = dcUtil.parseBool(dcSettings.getIniSetting("DeleteTempXml", "false"));
     var initUseCompFrameRange = dcUtil.parseBool(dcSettings.getIniSetting("UseCompFrame", "false"));
+    var initConvertToMov = dcUtil.parseBool(dcSettings.getIniSetting("ConvertToMov", "false"));
     var initFirstAndLast = null;
     if (!initUseCompFrameRange) {
         initFirstAndLast = false;
@@ -482,8 +483,12 @@ function __generateSubmitterUI() {
         submitEntireQueueGroup.multiProcess.helpTip = 'Enable to use multiple processes to render multiple frames simultaneously (After Effects CS3 and later).';
         submitEntireQueueGroup.submitScene = submitEntireQueueGroup.add('checkbox', undefined, 'Submit Project File With Job');
         submitEntireQueueGroup.submitScene.value = initSubmitScene;
-        submitEntireQueueGroup.submitScene.size = CHECKBOX_D_SIZE;
+        submitEntireQueueGroup.submitScene.size = CHECKBOX_B_SIZE;
         submitEntireQueueGroup.submitScene.helpTip = 'If enabled, the After Effects Project File will be submitted with the job.';
+        submitEntireQueueGroup.convertToMov = submitEntireQueueGroup.add('checkbox', undefined, 'Convert to Mov');
+        submitEntireQueueGroup.convertToMov.value = initConvertToMov;
+        submitEntireQueueGroup.convertToMov.size = CHECKBOX_D_SIZE;
+        submitEntireQueueGroup.convertToMov.helpTip = 'Adds a step that uses FFMPEG to convert the output to an uncompressed MOV file. You MUST set your export settings to an EXR sequence and have FFMPEG in the system path of your workers';
 
         // Create Ignore Missing Layers and Submit Project File group and widgets
         ignoreMissingLayersGroup = deadlineCloud.aeAdvancedOptionsPanel.add('group', undefined);
@@ -1076,9 +1081,10 @@ function __generateSubmitterUI() {
         }
 
         // Export as XML functionality + update
-        ignoreMissingLayersGroup.exportAsXml.onClick = function() {
-            makeClickHandler("ExportAsXml", ignoreMissingLayersGroup.exportAsXml, dcUtil.toBooleanString);
-        }
+        ignoreMissingLayersGroup.exportAsXml.onClick = makeClickHandler("ExportAsXml", ignoreMissingLayersGroup.exportAsXml, dcUtil.toBooleanString);
+        
+        // Convert to MOV
+        submitEntireQueueGroup.convertToMov.onClick = makeClickHandler("ConvertToMov", submitEntireQueueGroup.convertToMov, dcUtil.toBooleanString);
 
         // delete temp xml functionality + update
         ignoreMissingEffectsGroup.deleteTempXml.onClick = function() {

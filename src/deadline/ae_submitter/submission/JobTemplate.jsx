@@ -349,3 +349,42 @@ var OPENJD_TEMPLATE_LAYER = {
         }
     }]
 }
+
+
+var OPENJD_CONVERT_TO_MOV_STEP = {
+    "name": "FFMPEG Convert to MOV",
+    "dependencies" : [],
+    "script": {
+        "actions": {
+            "onRun": {
+                "command": "powershell",
+                "args": [
+                    "{{Task.File.runScript}}"
+                ]
+            }
+        },
+        "embeddedFiles": [
+            {
+                "name": "runScript",
+                "filename": "convertToMov.ps1",
+                "type": "TEXT",
+                "runnable": true,
+                "data": "\
+                $ffmpeg = if ($null -ne $env:FFMPEG_EXE) { $env:FFMPEG_EXE } else { 'ffmpeg' }\
+                $original_path = '{{Param.OutputFilePath}}\\'\
+                $original_output = '{{Param.OutputPattern}}'\
+                $original_ext = '{{Param.OutputFormat}}'\
+                $sequence_regex = $original_output + '.' + $original_ext -replace '\\[#+\\]', '([0-9]+)'\
+                cd $original_path\
+                $sequence = Get-ChildItem | Where-Object Name -Match $sequence_regex\
+                $frame_match =  $sequence[0].Name | Select-String -Pattern $sequence_regex\
+                $frame_start = $frame_match.Matches[0].Groups[1].Value\
+                $frame_length = $frame_start.Length\
+                $frame_str = '%0{0}d' -f $frame_length\
+                $exr_str = $sequence_regex.Replace('([0-9]+)', $frame_str)\
+                $mov_str = $original_output + '.mov' -replace '\\[#+\\]', ''\
+                & $ffmpeg -start_number $frame_start -framerate _FPS_ -i $exr_str -vcodec v210 -pix_fmt yuv422p10le $mov_str\n"
+            }
+        ]
+    }
+}

@@ -98,6 +98,9 @@ function __generateInitData()
     function _generateFontReferences() {
         var fontLocations = [];
         var usedList = app.project.usedFonts;
+        if (usedList == null){
+            return fontLocations;
+        }
         for (var i = 0; i < usedList.length; i++) {
             var font = usedList[i].font;
             var fontFamilyName = font.familyName;
