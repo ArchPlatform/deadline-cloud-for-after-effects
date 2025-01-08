@@ -538,14 +538,12 @@ function __generateSubmitButton() {
 
             //Add MOV step
             if(submitEntireQueueGroup.convertToMov.value){
+                dcCreateMovWorkflow.runChecks(__renderQueueItem);
                 var convertStep = dcUtil.deepCopy(OPENJD_CONVERT_TO_MOV_STEP);
                 var dep = {"dependsOn": __compName};
-                var fps = __renderQueueItem.comp.frameRate
-                convertStep.script.embeddedFiles[0].data.replace("_FPS_", fps)
                 convertStep.dependencies.push(dep);
-                convertStep.script.embeddedFiles[0].data = convertStep.script.embeddedFiles[0].data.replace("{{Param.OutputFilePath}}", "{{Param." + __compName +"_OutputFilePath}}")
-                convertStep.script.embeddedFiles[0].data = convertStep.script.embeddedFiles[0].data.replace("{{Param.OutputPattern}}", "{{Param." + __compName +"_OutputPattern}}")
-                convertStep.script.embeddedFiles[0].data = convertStep.script.embeddedFiles[0].data.replace("{{Param.OutputFormat}}", "{{Param." + __compName +"_OutputFormat}}")
+
+                convertStep.script.embeddedFiles[0].data = dcCreateMovWorkflow.generateRunScript(__renderQueueItem)
                 jobTemplate.steps.push(convertStep);
             }
         }
@@ -615,13 +613,12 @@ function __generateSubmitButton() {
         }
         //Add MOV step
         if(submitEntireQueueGroup.convertToMov.value){
+            dcCreateMovWorkflow.runChecks(renderQueueItem)
             var convertStep = dcUtil.deepCopy(OPENJD_CONVERT_TO_MOV_STEP);
             var dep = {"dependsOn": itemName};
-            var fps = renderQueueItem.comp.frameRate
-            convertStep.script.embeddedFiles[0].data.replace("_FPS_", fps)
             convertStep.dependencies.push(dep);
-            convertStep.script.embeddedFiles[0].data = convertStep.script.embeddedFiles[0].data.replace("{{Param.OutputFilePath}}", "{{Param." + itemName + "_OutputFilePath}}");
-            convertStep.script.embeddedFiles[0].data = convertStep.script.embeddedFiles[0].data.replace("{{Param.OutputFilePath}}", "{{Param." + itemName + "_OutputFilePath}}");
+
+            convertStep.script.embeddedFiles[0].data = dcCreateMovWorkflow.generateRunScript(renderQueueItem)
             jobTemplate.steps.push(convertStep);
         }
         

@@ -33,3 +33,5 @@
 #include "UI/SettingsWindow.jsx"
 
 #include "UI/SubmitButton.jsx"
+
+#include "Workflows/CreateMOV/CreateMov.jsx"

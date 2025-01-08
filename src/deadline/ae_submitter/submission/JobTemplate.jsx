@@ -383,6 +383,7 @@ var OPENJD_CONVERT_TO_MOV_STEP = {
                 $frame_str = '%0{0}d' -f $frame_length\
                 $exr_str = $sequence_regex.Replace('([0-9]+)', $frame_str)\
                 $mov_str = $original_output + '.mov' -replace '\\[#+\\]', ''\
+                Write-Host 'Running command: & $ffmpeg -start_number $frame_start -framerate $fps -i $exr_str -vcodec v210 -pix_fmt yuv422p10le $mov_str'\
                 & $ffmpeg -start_number $frame_start -framerate _FPS_ -i $exr_str -vcodec v210 -pix_fmt yuv422p10le $mov_str\n"
             }
         ]
