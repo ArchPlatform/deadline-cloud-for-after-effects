@@ -174,7 +174,7 @@ var OPENJD_TEMPLATE = {
             "embeddedFiles": [
             {
                 "name": "runAerender",
-                "filename": "aerender.bat",
+                "filename": "aerender.ps1",
                 "type": "TEXT",
                 "runnable": true,
                 "data": "@ECHO OFF\n" +

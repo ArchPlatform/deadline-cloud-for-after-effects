@@ -92,7 +92,12 @@ function __generateSubmitButton() {
             stepsTemplate[0].parameterSpace.taskParameterDefinitions[1].range = "{{Param." + itemName + "_FrameStartPlusChunkSizeMinusOne}}-{{Param." + itemName + "_FrameEndMinusOne}}:{{Param." + itemName + "_ChunkSize}},{{Param." + itemName + "_FrameEnd}}";
         }
 
-        stepsTemplate[0].script.embeddedFiles[0].data = dcRenderScript.generateRenderCommand("{{Param." + itemName + "_CompName}}")
+        stepsTemplate[0].script.embeddedFiles[0].data = dcRenderScript.generateRenderCommand(
+            "{{Param." + itemName + "_CompName}}",
+            "{{Param." + itemName + "_OutputFilePath}}",
+            "{{Param." + itemName + "_OutputPattern}}",
+            "{{Param." + itemName + "_OutputFormat}}"
+        )
 
         basicTemplate.steps[stepID-1] = stepsTemplate[0]; 
         // logger.debug("[generateStep] basicTemplate: " + JSON.stringify(basicTemplate), _submitButtonFileName);
