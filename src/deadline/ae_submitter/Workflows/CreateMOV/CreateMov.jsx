@@ -48,8 +48,7 @@ function __generateRunScript(renderQueueItem) {
 "$frame_start = $frame_match.Matches[0].Groups[1].Value\n" +
 "$frame_str = '%0{0}d' -f $frame_start.Length\n" +
 "$frame_sequence_path = $sequence_regex.Replace('([0-9]+)', $frame_str)\n" +
-"$movie_path = $basename -replace '_\\[#+\\]', '' -replace '" + formatParameterName + "', 'mov' \n" +
-"Write-Host $sequence\n"
+"$movie_path = $basename -replace '_\\[#+\\]', '' -replace '" + formatParameterName + "', 'mov' \n"
     )
     var executableName = "$env:FFMPEG_EXE"
     var arguments = "-start_number $frame_start -framerate " + fps + " -i `\"$frame_sequence_path`\" -vcodec v210 -pix_fmt yuv422p10le `\"$movie_path`\""
