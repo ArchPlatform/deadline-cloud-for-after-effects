@@ -91,6 +91,7 @@ function __generateProcessWrapper(executableName, arguments, errorHandlers) {
 "    FileName = $executable\n" +
 "    Arguments = $args\n" +
 "    UseShellExecute = $false\n" +
+"    WorkingDirectory = $(Get-Location).Path\n" +
 "    RedirectStandardOutput = $true\n" +
 "    RedirectStandardError = $true\n" +
 "}\n" +
@@ -126,7 +127,7 @@ function __generateProcessWrapper(executableName, arguments, errorHandlers) {
 "    Write-Host \"Return code:\" $Process.ExitCode -ForegroundColor Red\n" +
 "    exit $Process.ExitCode\n" +
 "}\n" +
-"Write-Host \"aerender succeeded\" -ForegroundColor Green\n" +
+"Write-Host \"" + executableName + " succeeded\" -ForegroundColor Green\n" +
 "exit 0\n"
     )
 }
