@@ -51,7 +51,7 @@ function __generateRunScript(renderQueueItem) {
 "$movie_path = $basename -replace '_\\[#+\\]', '' -replace '" + formatParameterName + "', 'mov' \n"
     )
     var executableName = "$env:FFMPEG_EXE"
-    var arguments = "-start_number $frame_start -framerate " + fps + " -i `\"$frame_sequence_path`\" -vcodec v210 -pix_fmt yuv422p10le `\"$movie_path`\""
+    var arguments = "-y -start_number $frame_start -framerate " + fps + " -i `\"$frame_sequence_path`\" -vcodec v210 -vf `\"pad=ceil(iw/2)*2:ceil(ih/2)*2`\" -pix_fmt yuv422p10le `\"$movie_path`\""
 
     return (
         dcPowershellUtils.generateTryCatchWrapper(
