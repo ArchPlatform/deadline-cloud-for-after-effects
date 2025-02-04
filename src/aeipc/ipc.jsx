@@ -223,7 +223,7 @@ function _ipcModule() {
         var outputPatternData = data["output_pattern"];
         var outputFormatData = data["output_format"];
         var comp = null;
-        var RQI = null;
+                var RQI = null;
         var compFound = false;
         //disable all render queue items except for the first item that matches our 
         for (var j = 1; j <= app.project.renderQueue.numItems; j++)
@@ -236,6 +236,7 @@ function _ipcModule() {
                 compFound = true;
             }
             else {
+                _log.info("Setting " + app.project.renderQueue.item(j).comp.name + " to not render");
                 app.project.renderQueue.item(j).render = false;
             }
         }
@@ -269,6 +270,7 @@ function _ipcModule() {
         RQI.timeSpanStart = start
         RQI.timeSpanDuration = duration
         app.project.renderQueue.render();
+        _log.info("Completed frame " + frame);
         RQI.remove();
     
         conn.writeln("AEClient: Finished Rendering Frame " + frame);
