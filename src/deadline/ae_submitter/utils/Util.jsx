@@ -837,6 +837,40 @@ function __generateUtil() {
         return fileName;
     }
 
+    function getFrameChunkParameters(frameList, framesPerTask) {
+        var frameChunkParametersList = [];
+        var splitList = frameList.split(",");
+
+        for(var i = 0; i < splitList.length; i++) {
+            if(splitList[i].indexOf("-") == -1)
+            {
+                // Single Frame
+                frameChunkParametersList.push({
+                    "originalRange": splitList[i] + "-" + splitList[i],
+                    "frameStart": parseInt(splitList[i]),
+                    "frameEnd": parseInt(splitList[i]),
+                    "chunkSize": 1,
+                    "frameStartPlusChunkSizeMinusOne": parseInt(frameStart) + 1 - 1,
+                    "frameEndMinusOne": parseInt(splitList[i]) - 1,
+                })
+            } else {
+                // Range
+                var numbers = splitList[i].split("-");
+                // Either the framesPerTask we requested, or the smaller range if X-Y is less than framesPerTask
+                var chunkSize = Math.min(parseInt(numbers[1]) - parseInt(numbers[0]) + 1, framesPerTask)
+                frameChunkParametersList.push({
+                    "originalRange": splitList[i],
+                    "frameStart": parseInt(numbers[0]),
+                    "frameEnd": parseInt(numbers[1]),
+                    "chunkSize": chunkSize,
+                    "frameStartPlusChunkSizeMinusOne": parseInt(numbers[0]) + chunkSize - 1,
+                    "frameEndMinusOne": parseInt(numbers[1]) - 1,
+                })
+            }
+        }
+        return frameChunkParametersList
+    }
+
     function getDuplicateFrames(frameList)
     {
         /**
@@ -954,6 +988,7 @@ function __generateUtil() {
         "removeIllegalCharacters": removeIllegalCharacters,
         "removePercentageFromFileName": removePercentageFromFileName,
         "getDuplicateFrames": getDuplicateFrames,
+        "getFrameChunkParameters": getFrameChunkParameters,
         "getTempFile": getTempFile,
         "getUserDirectory": getUserDirectory
     }

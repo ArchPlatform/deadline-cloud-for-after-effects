@@ -69,12 +69,14 @@ function __generateSubmitterUI() {
     var initExportAsXml = dcUtil.parseBool(dcSettings.getIniSetting("ExportAsXml", "false"));
     var initDeleteTempXml = dcUtil.parseBool(dcSettings.getIniSetting("DeleteTempXml", "false"));
     var initUseCompFrameRange = dcUtil.parseBool(dcSettings.getIniSetting("UseCompFrame", "false"));
+    var initConvertToMov = dcUtil.parseBool(dcSettings.getIniSetting("ConvertToMov", "false"));
     var initFirstAndLast = null;
     if (!initUseCompFrameRange) {
         initFirstAndLast = false;
     } else {
         initFirstAndLast = dcUtil.parseBool(dcSettings.getIniSetting("FirstAndLast", "false"));
     }
+    var initFramesPerTask = parseInt(dcSettings.getIniSetting("FramesPerTask", "10"));
 
     var initIgnoreMissingLayers = dcUtil.parseBool(dcSettings.getIniSetting("MissingLayers", "false"));
     var initIgnoreMissingEffects = dcUtil.parseBool(dcSettings.getIniSetting("MissingEffects", "false"));
@@ -481,8 +483,12 @@ function __generateSubmitterUI() {
         submitEntireQueueGroup.multiProcess.helpTip = 'Enable to use multiple processes to render multiple frames simultaneously (After Effects CS3 and later).';
         submitEntireQueueGroup.submitScene = submitEntireQueueGroup.add('checkbox', undefined, 'Submit Project File With Job');
         submitEntireQueueGroup.submitScene.value = initSubmitScene;
-        submitEntireQueueGroup.submitScene.size = CHECKBOX_D_SIZE;
+        submitEntireQueueGroup.submitScene.size = CHECKBOX_B_SIZE;
         submitEntireQueueGroup.submitScene.helpTip = 'If enabled, the After Effects Project File will be submitted with the job.';
+        submitEntireQueueGroup.convertToMov = submitEntireQueueGroup.add('checkbox', undefined, 'Convert to Mov');
+        submitEntireQueueGroup.convertToMov.value = initConvertToMov;
+        submitEntireQueueGroup.convertToMov.size = CHECKBOX_D_SIZE;
+        submitEntireQueueGroup.convertToMov.helpTip = 'Adds a step that uses FFMPEG to convert the output to an uncompressed MOV file. You MUST set your export settings to an EXR sequence and have FFMPEG in the system path of your workers';
 
         // Create Ignore Missing Layers and Submit Project File group and widgets
         ignoreMissingLayersGroup = deadlineCloud.aeAdvancedOptionsPanel.add('group', undefined);
@@ -671,6 +677,12 @@ function __generateSubmitterUI() {
         frameListGroup.useCompFrameList = frameListGroup.add('checkbox', undefined, 'Use Frame List From The Comp');
         frameListGroup.useCompFrameList.value = initUseCompFrameRange;
         frameListGroup.useCompFrameList.helpTip = 'If enabled, the Comp\'s frame list will be used instead of the frame list in this submitter.';
+
+        frameListGroup.framesPerTask = frameListGroup.add('edittext', undefined, initFramesPerTask);
+        frameListGroup.framesPerTask.size = SHORT_TEXT_SIZE;
+        frameListGroup.framesPerTaskLabel = frameListGroup.add('statictext', undefined, 'Frames Per Task');
+        frameListGroup.framesPerTaskLabel.size = LABEL_SIZE;
+        frameListGroup.framesPerTaskLabel.helpTip = 'This is the number of frames to be rendered per Job Task.';
 
         // Create Comp submission group and widgets (Select One, Use Selected in RQ, All as separate)
         compSubmissionGroup = deadlineCloud.aeOptionsPanel.add('group', undefined);
@@ -1069,9 +1081,10 @@ function __generateSubmitterUI() {
         }
 
         // Export as XML functionality + update
-        ignoreMissingLayersGroup.exportAsXml.onClick = function() {
-            makeClickHandler("ExportAsXml", ignoreMissingLayersGroup.exportAsXml, dcUtil.toBooleanString);
-        }
+        ignoreMissingLayersGroup.exportAsXml.onClick = makeClickHandler("ExportAsXml", ignoreMissingLayersGroup.exportAsXml, dcUtil.toBooleanString);
+        
+        // Convert to MOV
+        submitEntireQueueGroup.convertToMov.onClick = makeClickHandler("ConvertToMov", submitEntireQueueGroup.convertToMov, dcUtil.toBooleanString);
 
         // delete temp xml functionality + update
         ignoreMissingEffectsGroup.deleteTempXml.onClick = function() {
@@ -1219,6 +1232,17 @@ function __generateSubmitterUI() {
             if(text !== filteredText)
             {
                 frameListGroup.frameList.text = filteredText;
+            }
+        }
+
+        frameListGroup.framesPerTask.onChange = function() {
+            currentValue = frameListGroup.framesPerTask.text.replace(/[^\d]/g, '');
+
+            if (parseInt(currentValue) > 9999) {
+                frameListGroup.framesPerTask.text = "9999"
+            }
+            if (parseInt(currentValue) < 1) {
+                frameListGroup.framesPerTask.text = "1"
             }
         }
 

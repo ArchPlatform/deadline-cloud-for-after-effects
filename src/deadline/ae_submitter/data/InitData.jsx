@@ -7,20 +7,20 @@ function __generateInitData()
         // Retrieve the config data on startup.
         // Check if config is available and parse out result
         _dcConfig = dcUtil.wrappedCallSystem("deadline config show");
-    
-        dcProperties.config.aws_profile.set(dcUtil.getConfigSettingData(_dcConfig, "defaults.aws_profile_name"));
+
+        dcProperties.config.aws_profile.set(dcUtil.wrappedCallSystem("deadline config get defaults.aws_profile_name"));
         // If job history has backslashes, `deadline auth login` will mangle the config path
-        var _job_history = dcUtil.getConfigSettingData(_dcConfig, "settings.job_history_dir")
+        var _job_history = dcUtil.wrappedCallSystem("deadline config get settings.job_history_dir")
         _job_history = dcUtil.enforceForwardSlashes(_job_history)
         dcProperties.config.job_history_dir.set(_job_history);
-        dcProperties.config.farm_id.set(dcUtil.getConfigSettingData(_dcConfig, "defaults.farm_id"));
-        dcProperties.config.queue_id.set(dcUtil.getConfigSettingData(_dcConfig, "defaults.queue_id"));
-        dcProperties.config.storage_profile_id.set(dcUtil.getConfigSettingData(_dcConfig, "settings.storage_profile_id"));
-        dcProperties.config.job_attachments_file_system.set(dcUtil.getConfigSettingData(_dcConfig, "defaults.job_attachments_file_system"));
-        dcProperties.config.auto_accept.set(dcUtil.getConfigSettingData(_dcConfig, "settings.auto_accept"));
-        dcProperties.config.conflict_resolution.set(dcUtil.getConfigSettingData(_dcConfig, "settings.conflict_resolution"));
-        dcProperties.config.log_level.set(dcUtil.getConfigSettingData(_dcConfig, "settings.log_level"));
-        dcProperties.config.deadline_cloud_monitor.set(dcUtil.getConfigSettingData(_dcConfig, "deadline-cloud-monitor.path"));
+        dcProperties.config.farm_id.set(dcUtil.wrappedCallSystem("deadline config get defaults.farm_id"));
+        dcProperties.config.queue_id.set(dcUtil.wrappedCallSystem("deadline config get defaults.queue_id"));
+        dcProperties.config.storage_profile_id.set(dcUtil.wrappedCallSystem("deadline config get settings.storage_profile_id"));
+        dcProperties.config.job_attachments_file_system.set(dcUtil.wrappedCallSystem("deadline config get defaults.job_attachments_file_system"));
+        dcProperties.config.auto_accept.set(dcUtil.wrappedCallSystem("deadline config get settings.auto_accept"));
+        dcProperties.config.conflict_resolution.set(dcUtil.wrappedCallSystem("deadline config get settings.conflict_resolution"));
+        dcProperties.config.log_level.set(dcUtil.wrappedCallSystem("deadline config get settings.log_level"));
+        dcProperties.config.deadline_cloud_monitor.set(dcUtil.wrappedCallSystem("deadline config get deadline-cloud-monitor.path"));
     
         logger.debug("Config here ----------------------: \n" + _dcConfig, scriptFileInitDataName);
         logger.debug("Aws profile name: " + dcProperties.config.aws_profile.get(), scriptFileInitDataName);
@@ -87,7 +87,83 @@ function __generateInitData()
                 }
             }
         }
+        var fontReferences = generateFontReferences();
+        logger.debug("Get Fonts: " + key, scriptFileInitDataName);
+        for (var i = 0; i < fontReferences.length; i++) {
+            detectedItemsList.push(fontReferences[i]);
+        }
         dcProperties.jobAttachments.autoDetectedInputFiles.set(detectedItemsList);
+    }
+
+    function _generateFontReferences() {
+        var fontLocations = [];
+        var usedList = app.project.usedFonts;
+        if (usedList == null){
+            return fontLocations;
+        }
+        for (var i = 0; i < usedList.length; i++) {
+            var font = usedList[i].font;
+            var fontFamilyName = font.familyName;
+            var familyStyle = font.styleName;
+            var fontName = fontFamilyName + " " + familyStyle + ".otf";
+            var fontLocation = font.location;
+            fontLocations.push([fontName, fontLocation]);
+        }
+        return fontLocations
+    }
+
+    function _oldGenerateFontReferences() {
+        var fontLocations = [];
+        var items = app.project.items;
+        for (var i = items.length; i >= 1; i--) {
+            var myItem = app.project.item(i);
+            if (myItem instanceof CompItem) {
+                for (var j = myItem.layers.length; j >= 1; j--) {
+                    var myLayer = myItem.layers[j];
+                    if (myLayer instanceof TextLayer){
+                        var textDocument = myLayer.text.sourceText.value;
+                        var fontLocation = textDocument.fontLocation;
+                        var fontFamilyName = textDocument.fontFamily;
+                        var familyStyle = textDocument.fontStyle;
+                        var fontName = fontFamilyName + " " + familyStyle + ".otf";
+                        fontLocations.push([fontName, fontLocation]);
+                    }
+                }
+            }
+        }
+        return fontLocations
+    }
+
+    function generateFontReferences() {
+        var rawFontPaths = [];
+        if (parseInt(app.version[0] + app.version[1]) >= 24) {
+            rawFontPaths = _generateFontReferences();
+        } else {
+            rawFontPaths = _oldGenerateFontReferences();
+        }
+        var _tempFilePath = dcUtil.normPath(Folder.temp.fsName + "/" + "tempFonts");
+        var formattedFontPaths = [];
+        var tempFontPath = new Folder(_tempFilePath);
+        if (!tempFontPath.exists) {
+            tempFontPath.create();
+        }
+
+
+        for (var i = 0; i < rawFontPaths.length; i++) {
+            var fontName = rawFontPaths[i][0];
+            var fontLocation = rawFontPaths[i][1];
+            if (fontLocation.indexOf("C:\\Windows\\Fonts") !== -1) {
+                // We are filtering out fonts installed in C:\Windows\Fonts potentially here.
+                //   I would make the argument that if a font is installed to the system (not an Adobe Font), that
+                //   it should be managed on a system level not through the submitter.
+                continue
+            }
+            var fontFile = File(fontLocation);
+            var _filePath = dcUtil.normPath(_tempFilePath + "/" + fontName);
+            fontFile.copy(_filePath);
+            formattedFontPaths.push(_filePath);
+        }
+        return formattedFontPaths;
     }
 
     function initAutoDetectOutputDirectories()

@@ -44,16 +44,13 @@ class AEClient(ClientInterface):
             client_path_abs = client_path_abs.replace("\\", "\\\\")
         startup_script_inline = f"var x = new File('{client_path_abs}') ; x.open(); eval(x.read()); app.exitAfterLaunchAndEval = false;"
 
-        logger.info("Querying for AFTEREFFECTS_ADAPTOR_AEFX_EXECUTABLE environment variable")
-        logger.info("AFTEREFFECTS_ADAPTOR_AEFX_EXECUTABLE: %s" % os.environ.get("AFTEREFFECTS_ADAPTOR_AEFX_EXECUTABLE", "Not Set"))
-        ae_exe = os.environ.get("AFTEREFFECTS_ADAPTOR_AEFX_EXECUTABLE", "afterfx")
-
+        ae_exe = os.environ.get("AFTERFX_EXECUTABLE", "afterfx")
 
         # flag -noui for no ui doesn't close properly when running in monitor
         cmd_args = [ae_exe, "-noui", "-s", startup_script_inline]
         print(f"Starting AfterFX: {cmd_args}")
         # Set stdout and stderr to the system stdout and stderr to prevent shell getting blocked
-        sys.__stdout__.flush()
+        sys.stdout.flush()
 
         regexhandler = RegexHandler(list())
         self._ipc_client = LoggingSubprocess(
@@ -93,7 +90,7 @@ class AEClient(ClientInterface):
             time.sleep(0.1)
             if time.time() - start > timeout:
                 self._ipc_client.terminate()
-                raise RuntimeError("Error waiting for AfterEffects IPC socket to come online")
+                raise RuntimeError("Error waiting for After Effects IPC socket to come online")
 
 
 def main():

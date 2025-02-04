@@ -12,6 +12,12 @@
 
 #include "data/InitData.jsx"
 
+#include "data/PowerShellUtils.jsx"
+
+#include "data/RenderScript.jsx"
+
+#include "data/Formats.jsx"
+
 #include "submission/AssetReferenceTemplate.jsx"
 
 #include "submission/DataTemplate.jsx"
@@ -27,3 +33,5 @@
 #include "UI/SettingsWindow.jsx"
 
 #include "UI/SubmitButton.jsx"
+
+#include "Workflows/CreateMOV/CreateMov.jsx"

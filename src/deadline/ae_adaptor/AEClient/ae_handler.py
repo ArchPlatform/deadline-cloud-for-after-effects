@@ -4,7 +4,6 @@ from __future__ import annotations
 
 import os
 import logging
-import subprocess
 from typing import Optional
 
 from ae_adaptor.AEClient.ipc import send_command
@@ -61,41 +60,17 @@ class AEHandler:
         if not os.path.exists(self.output_dir):
             os.makedirs(self.output_dir)
 
-        filename = self.output_pattern + "." + self.output_format
-        output = os.path.join(self.output_dir, filename)
-        ae_render_exe = os.environ.get("AFTEREFFECTS_ADAPTOR_AERENDER_EXECUTABLE", "aerender")
-
-        data.update({
-            "comp_name": self.comp_name,
-            "output_dir": self.output_dir,
-            "output_pattern": self.output_pattern,
-            "output_format": self.output_format,
-
-        })
+        data.update(
+            {
+                "comp_name": self.comp_name,
+                "output_dir": self.output_dir,
+                "output_pattern": self.output_pattern,
+                "output_format": self.output_format,
+            }
+        )
         resp = send_command("start_render", data)
         logger.info("RESPONSE")
         print(resp, flush=True)
-
-        # ae_render_args = [
-        #     ae_render_exe,
-        #     "-project",
-        #     self.file_path,
-        #     "-comp",
-        #     self.comp_name,
-        #     "-output",
-        #     output,
-        #     "-s",
-        #     str(frame),
-        #     "-e",
-        #     str(frame),
-        #     "-reuse",
-        #     "-close",
-        #     "DO_NOT_CLOSE",
-        # ]
-        # logger.info("Starting render with command: {}".format(ae_render_args))
-        # subprocess.run(ae_render_args)
-
-        # print(f"AEClient: Finished Rendering Frame {frame}\n", flush=True)
 
     def set_output_file_path(self, data: dict) -> None:
         """
