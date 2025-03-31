@@ -50,6 +50,7 @@ function __generateTryCatchWrapper(code, noExit) {
 "} catch {\n" +
 "    Write-Host \"Error caught\"\n" +
 "    Write-Host $_.Exception.Message -ForegroundColor Red\n" +
+"    exit 1\n" +
 "}\n"
     )
     if (noExit !== undefined && noExit === true) {
