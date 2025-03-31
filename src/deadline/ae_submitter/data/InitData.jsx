@@ -7,20 +7,26 @@ function __generateInitData()
         // Retrieve the config data on startup.
         // Check if config is available and parse out result
         _dcConfig = dcUtil.wrappedCallSystem("deadline config show");
-    
-        dcProperties.config.aws_profile.set(dcUtil.getConfigSettingData(_dcConfig, "defaults.aws_profile_name"));
+
+        // Helper function to get config values and trim trailing newlines
+        function getConfigValue(command) {
+            var value = dcUtil.wrappedCallSystem(command);
+            return value.replace(/[\r\n]+$/, ''); // Remove trailing newlines and carriage returns
+        }
+
+        dcProperties.config.aws_profile.set(getConfigValue("deadline config get defaults.aws_profile_name"));
         // If job history has backslashes, `deadline auth login` will mangle the config path
-        var _job_history = dcUtil.getConfigSettingData(_dcConfig, "settings.job_history_dir")
-        _job_history = dcUtil.enforceForwardSlashes(_job_history)
+        var _job_history = getConfigValue("deadline config get settings.job_history_dir");
+        _job_history = dcUtil.enforceForwardSlashes(_job_history);
         dcProperties.config.job_history_dir.set(_job_history);
-        dcProperties.config.farm_id.set(dcUtil.getConfigSettingData(_dcConfig, "defaults.farm_id"));
-        dcProperties.config.queue_id.set(dcUtil.getConfigSettingData(_dcConfig, "defaults.queue_id"));
-        dcProperties.config.storage_profile_id.set(dcUtil.getConfigSettingData(_dcConfig, "settings.storage_profile_id"));
-        dcProperties.config.job_attachments_file_system.set(dcUtil.getConfigSettingData(_dcConfig, "defaults.job_attachments_file_system"));
-        dcProperties.config.auto_accept.set(dcUtil.getConfigSettingData(_dcConfig, "settings.auto_accept"));
-        dcProperties.config.conflict_resolution.set(dcUtil.getConfigSettingData(_dcConfig, "settings.conflict_resolution"));
-        dcProperties.config.log_level.set(dcUtil.getConfigSettingData(_dcConfig, "settings.log_level"));
-        dcProperties.config.deadline_cloud_monitor.set(dcUtil.getConfigSettingData(_dcConfig, "deadline-cloud-monitor.path"));
+        dcProperties.config.farm_id.set(getConfigValue("deadline config get defaults.farm_id"));
+        dcProperties.config.queue_id.set(getConfigValue("deadline config get defaults.queue_id"));
+        dcProperties.config.storage_profile_id.set(getConfigValue("deadline config get settings.storage_profile_id"));
+        dcProperties.config.job_attachments_file_system.set(getConfigValue("deadline config get defaults.job_attachments_file_system"));
+        dcProperties.config.auto_accept.set(getConfigValue("deadline config get settings.auto_accept"));
+        dcProperties.config.conflict_resolution.set(getConfigValue("deadline config get settings.conflict_resolution"));
+        dcProperties.config.log_level.set(getConfigValue("deadline config get settings.log_level"));
+        dcProperties.config.deadline_cloud_monitor.set(getConfigValue("deadline config get deadline-cloud-monitor.path"));
     
         logger.debug("Config here ----------------------: \n" + _dcConfig, scriptFileInitDataName);
         logger.debug("Aws profile name: " + dcProperties.config.aws_profile.get(), scriptFileInitDataName);
