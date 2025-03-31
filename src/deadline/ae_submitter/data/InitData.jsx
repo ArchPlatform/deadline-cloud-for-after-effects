@@ -27,7 +27,7 @@ function __generateInitData()
         dcProperties.config.conflict_resolution.set(getConfigValue("deadline config get settings.conflict_resolution"));
         dcProperties.config.log_level.set(getConfigValue("deadline config get settings.log_level"));
         dcProperties.config.deadline_cloud_monitor.set(getConfigValue("deadline config get deadline-cloud-monitor.path"));
-    
+
         logger.debug("Config here ----------------------: \n" + _dcConfig, scriptFileInitDataName);
         logger.debug("Aws profile name: " + dcProperties.config.aws_profile.get(), scriptFileInitDataName);
         logger.debug("Job History Directory output: " + dcProperties.config.job_history_dir.get(), scriptFileInitDataName);
