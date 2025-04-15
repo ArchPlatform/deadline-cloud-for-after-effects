@@ -210,7 +210,7 @@ function __generateInitData()
         dialog.show();
         return dialog;
     }
-    
+
     function loadingLoginWindow()
     {
         // Create a new window

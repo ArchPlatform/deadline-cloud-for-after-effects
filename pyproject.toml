@@ -4,33 +4,33 @@ build-backend = "hatchling.build"
 
 [project]
 name = "deadline-cloud-for-after-effects"
+description = "AWS Deadline Cloud for After Effects"
 authors = [
   {name = "Amazon Web Services"},
 ]
-description = "AWS Deadline Cloud for After Effects"
 dynamic = ["version"]
 readme = "README.md"
 license = "Apache-2.0"
 requires-python = ">=3.9"
 # https://pypi.org/classifiers/
 classifiers = [
-  "Development Status :: 3 - Alpha",
+  "Development Status :: 5 - Production/Stable",
   "Programming Language :: Python",
   "Programming Language :: Python :: 3 :: Only",
   "Programming Language :: Python :: 3.9",
   "Programming Language :: Python :: 3.10",
   "Programming Language :: Python :: 3.11",
   "Programming Language :: Python :: 3.12",
+  "Operating System :: POSIX :: Linux",
   "Operating System :: Microsoft :: Windows",
   "Operating System :: MacOS",
   "License :: OSI Approved :: Apache Software License",
   "Intended Audience :: Developers",
-  "Intended Audience :: End Users/Desktop",
+  "Intended Audience :: End Users/Desktop"
 ]
 
 dependencies = [
-  "deadline >= 0.48,< 0.50",
-  "openjd-adaptor-runtime >= 0.7,< 0.9"
+    "deadline == 0.49.*",
 ]
 
 [project.scripts]
@@ -43,7 +43,9 @@ Source = "https://github.com/aws-deadline/deadline-cloud-for-after-effects"
 # --- HATCH ---
 
 [tool.hatch.build]
-artifacts = ["*_version.py"]
+artifacts = [
+  "*_version.py",
+]
 
 [tool.hatch.version]
 source = "vcs"
@@ -115,14 +117,17 @@ addopts = [
     "--cov-report=term-missing",
     "--numprocesses=auto",
 ]
-testpaths = [ "test" ]
-looponfailroots = [
-    "src",
-    "test",
-]
+testpaths = ["test"]
+looponfailroots = ["src", "test"]
 # looponfailroots is deprecated, this removes the deprecation from the test output
 filterwarnings = [
-    "ignore::DeprecationWarning"
+    "ignore::DeprecationWarning",
+    "ignore:.*\\(rm_rf\\) unknown function.*:Warning"
+]
+markers = [
+    "submitter: mark a test as using the submitter.",
+    "adaptor: mark test as using the adaptor.",
+    "scene_files: used to mark which scene files a test uses.",
 ]
 
 # --- COVERAGE ---
@@ -133,7 +138,7 @@ branch = true
 parallel = true
 omit = [
   "**/__main__.py",
-  "**/_version.py"
+  "**/_version.py",
 ]
 
 [tool.coverage.paths]
