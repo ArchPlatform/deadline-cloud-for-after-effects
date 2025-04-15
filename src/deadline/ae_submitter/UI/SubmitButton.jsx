@@ -89,7 +89,7 @@ function __generateSubmitButton() {
         else
         {
             stepsTemplate[0].parameterSpace.taskParameterDefinitions[0].range = "{{Param." + itemName + "_FrameStart}} - {{Param." + itemName + "_FrameEnd}} : {{Param." + itemName + "_ChunkSize}}";
-            stepsTemplate[0].parameterSpace.taskParameterDefinitions[1].range = "{{Param." + itemName + "_FrameStartPlusChunkSizeMinusOne}}-{{Param." + itemName + "_FrameEndMinusOne}}:{{Param." + itemName + "_ChunkSize}},{{Param." + itemName + "_FrameEnd}}";
+            stepsTemplate[0].parameterSpace.taskParameterDefinitions[1].range = "{{Param." + itemName + "_FSPCSMO}}-{{Param." + itemName + "_FEMO}}:{{Param." + itemName + "_ChunkSize}},{{Param." + itemName + "_FrameEnd}}";
         }
 
         stepsTemplate[0].script.embeddedFiles[0].data = dcRenderScript.generateRenderCommand(
@@ -116,14 +116,14 @@ function __generateSubmitButton() {
         output.parameterDefinitions.push(applyDataToTemplate(itemName + "_FrameStart", dcUtil.deepCopy(dcDataTemplate.FrameStart)));
         output.parameterDefinitions.push(applyDataToTemplate(itemName + "_FrameEnd", dcUtil.deepCopy(dcDataTemplate.FrameEnd)));
         output.parameterDefinitions.push(applyDataToTemplate(itemName + "_ChunkSize", dcUtil.deepCopy(dcDataTemplate.ChunkSize)));
-        output.parameterDefinitions.push(applyDataToTemplate(itemName + "_FrameStartPlusChunkSizeMinusOne", dcUtil.deepCopy(dcDataTemplate.FrameStartPlusChunkSizeMinusOne)));
-        output.parameterDefinitions.push(applyDataToTemplate(itemName + "_FrameEndMinusOne", dcUtil.deepCopy(dcDataTemplate.FrameEndMinusOne)));
+        output.parameterDefinitions.push(applyDataToTemplate(itemName + "_FSPCSMO", dcUtil.deepCopy(dcDataTemplate.FSPCSMO)));
+        output.parameterDefinitions.push(applyDataToTemplate(itemName + "_FEMO", dcUtil.deepCopy(dcDataTemplate.FEMO)));
 
         output.parameterValues.push(applyDataToParameterTemplate(itemName + "_FrameStart", chunkParametersList[0].frameStart));
         output.parameterValues.push(applyDataToParameterTemplate(itemName + "_FrameEnd", chunkParametersList[0].frameEnd));
         output.parameterValues.push(applyDataToParameterTemplate(itemName + "_ChunkSize", chunkParametersList[0].chunkSize));
-        output.parameterValues.push(applyDataToParameterTemplate(itemName + "_FrameStartPlusChunkSizeMinusOne", chunkParametersList[0].frameStartPlusChunkSizeMinusOne));
-        output.parameterValues.push(applyDataToParameterTemplate(itemName + "_FrameEndMinusOne", chunkParametersList[0].frameEndMinusOne));
+        output.parameterValues.push(applyDataToParameterTemplate(itemName + "_FSPCSMO", chunkParametersList[0].FSPCSMO));
+        output.parameterValues.push(applyDataToParameterTemplate(itemName + "_FEMO", chunkParametersList[0].FEMO));
         return output
     }
 

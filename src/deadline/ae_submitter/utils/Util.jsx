@@ -850,8 +850,8 @@ function __generateUtil() {
                     "frameStart": parseInt(splitList[i]),
                     "frameEnd": parseInt(splitList[i]),
                     "chunkSize": 1,
-                    "frameStartPlusChunkSizeMinusOne": parseInt(frameStart) + 1 - 1,
-                    "frameEndMinusOne": parseInt(splitList[i]) - 1,
+                    "FSPCSMO": parseInt(frameStart) + 1 - 1,
+                    "FEMO": parseInt(splitList[i]) - 1,
                 })
             } else {
                 // Range
@@ -863,8 +863,8 @@ function __generateUtil() {
                     "frameStart": parseInt(numbers[0]),
                     "frameEnd": parseInt(numbers[1]),
                     "chunkSize": chunkSize,
-                    "frameStartPlusChunkSizeMinusOne": parseInt(numbers[0]) + chunkSize - 1,
-                    "frameEndMinusOne": parseInt(numbers[1]) - 1,
+                    "FSPCSMO": parseInt(numbers[0]) + chunkSize - 1,
+                    "FEMO": parseInt(numbers[1]) - 1,
                 })
             }
         }

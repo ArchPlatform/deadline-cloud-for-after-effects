@@ -35,9 +35,9 @@ function __generateDataTemplate() {
         "description": "The chunk size of frames per task to render",
         "minLength": 1
     }
-    var FrameStartPlusChunkSizeMinusOne =
+    var FSPCSMO =
     {
-        "name": "FrameStartPlusChunkSizeMinusOne",
+        "name": "FSPCSMO",
         "type": "STRING",
         "userInterface": {
             "control": "LINE_EDIT",
@@ -47,9 +47,9 @@ function __generateDataTemplate() {
         "description": "[Internal] This value needs to equal FrameStart + ChunkSize - 1",
         "minLength": 1
     }
-    var FrameEndMinusOne =
+    var FEMO =
     {
-        "name": "FrameEndMinusOne",
+        "name": "FEMO",
         "type": "STRING",
         "userInterface": {
             "control": "LINE_EDIT",
@@ -97,8 +97,8 @@ function __generateDataTemplate() {
         "FrameStart": FrameStart,
         "FrameEnd": FrameEnd,
         "ChunkSize": ChunkSize,
-        "FrameStartPlusChunkSizeMinusOne": FrameStartPlusChunkSizeMinusOne,
-        "FrameEndMinusOne": FrameEndMinusOne,
+        "FSPCSMO": FSPCSMO,
+        "FEMO": FEMO,
         "OutputPattern" : OutputPattern,
         "OutputFormat": OutputFormat,
         "CompName": CompName,

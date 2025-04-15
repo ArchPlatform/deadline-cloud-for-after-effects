@@ -62,7 +62,7 @@ var OPENJD_TEMPLATE = {
             "minLength": 1
         },
         {
-            "name": "FrameStartPlusChunkSizeMinusOne",
+            "name": "FSPCSMO",
             "type": "STRING",
             "userInterface": {
                 "control": "LINE_EDIT",
@@ -73,7 +73,7 @@ var OPENJD_TEMPLATE = {
             "minLength": 1
         },
         {
-            "name": "FrameEndMinusOne",
+            "name": "FEMO",
             "type": "STRING",
             "userInterface": {
                 "control": "LINE_EDIT",
@@ -125,7 +125,7 @@ var OPENJD_TEMPLATE = {
                 {
                     "name": "FrameChunkEnd",
                     "type": "INT",
-                    "range": "{{Param.FrameStartPlusChunkSizeMinusOne}}-{{Param.FrameEndMinusOne}}:{{Param.ChunkSize}},{{Param.FrameEnd}}"
+                    "range": "{{Param.FSPCSMO}}-{{Param.FEMO}}:{{Param.ChunkSize}},{{Param.FrameEnd}}"
                 }
             ],
             "combination": "(FrameChunkStart, FrameChunkEnd)"
