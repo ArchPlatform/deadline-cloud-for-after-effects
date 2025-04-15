@@ -68,7 +68,7 @@ function __generateSubmitterUI() {
     var initMissingFootage = dcUtil.parseBool(dcSettings.getIniSetting("MissingFootage", "false"));
     var initExportAsXml = dcUtil.parseBool(dcSettings.getIniSetting("ExportAsXml", "false"));
     var initDeleteTempXml = dcUtil.parseBool(dcSettings.getIniSetting("DeleteTempXml", "false"));
-    var initUseCompFrameRange = dcUtil.parseBool(dcSettings.getIniSetting("UseCompFrame", "false"));
+    var initUseCompFrameRange = dcUtil.parseBool(dcSettings.getIniSetting("UseCompFrame", "true"));
     var initConvertToMov = dcUtil.parseBool(dcSettings.getIniSetting("ConvertToMov", "false"));
     var initFirstAndLast = null;
     if (!initUseCompFrameRange) {
